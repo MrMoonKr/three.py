@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from math import sin, cos
 
 from core import *
@@ -106,6 +108,14 @@ class TestCustomMaterials(Base):
         
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestCustomMaterials().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestCustomMaterials(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

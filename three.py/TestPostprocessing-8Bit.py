@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from core import *
 from cameras import *
 from geometry import *
@@ -122,6 +124,14 @@ class TestPostprocessing2(Base):
         self.renderer.render(self.postScene, self.camera)
 
                     
-# instantiate and run the program
-TestPostprocessing2().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestPostprocessing2(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

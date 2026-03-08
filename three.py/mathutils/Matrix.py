@@ -52,14 +52,14 @@ class Matrix(object):
 
     # positions are global with respect to parent object
     def getPosition(self):
-        return [ self.matrix.item((0,3)), 
-                 self.matrix.item((1,3)),
-                 self.matrix.item((2,3)) ]
+        return [ self.matrix[0,3],
+                 self.matrix[1,3],
+                 self.matrix[2,3] ]
                  
     def setPosition(self, x=0, y=0, z=0, type=LOCAL):
-        self.matrix.itemset((0,3), x)
-        self.matrix.itemset((1,3), y)
-        self.matrix.itemset((2,3), z)
+        self.matrix[0,3] = x
+        self.matrix[1,3] = y
+        self.matrix[2,3] = z
         
     # returns 3x3 submatrix with rotation data (assumes no scale)
     def getRotationMatrix(self):

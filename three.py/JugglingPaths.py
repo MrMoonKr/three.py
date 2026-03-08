@@ -132,6 +132,15 @@ class JugglingPaths(Base):
             
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-JugglingPaths().run()
+_BaseGLApp = GLApp
 
+class GLApp(_BaseGLApp):
+    def __init__(self):
+        super().__init__(JugglingPaths)
+
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

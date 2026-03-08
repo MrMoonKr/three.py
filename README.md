@@ -19,7 +19,7 @@ This project uses the MIT license.
 
 ### Usage ###
 
-Three.py uses the Python libraries [PyGame](https://www.pygame.org/), [PyOpenGL](http://pyopengl.sourceforge.net/), and [NumPy](http://www.numpy.org/). 
+Three.py uses the Python libraries [pyopengltk](https://pypi.org/project/pyopengltk/), [PyOpenGL](http://pyopengl.sourceforge.net/), [Pillow](https://python-pillow.org/), and [NumPy](http://www.numpy.org/). 
 
 The following code creates a scene, a camera, ambient and directional lights, and adds a light blue cube to the scene. It animates (spins) the cube, and allows the user to move the camera with first-person controls.
 
@@ -67,12 +67,21 @@ class TestCube(Base):
         self.cube.transform.rotateY(0.03, Matrix.LOCAL)
         
         self.renderer.render(self.scene, self.camera)
-                    
-# instantiate and run the program
-TestCube().run()
+
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestCube(self)
+
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()
 ```
 
-In case you are having difficulties related to versions of the dependencies (PyGame, PyOpenGL, NumPy), a [pipenv](https://docs.pipenv.org/en/latest/) pipfile is provided to set up a [virtualenv](https://virtualenv.pypa.io/en/latest/).
+In case you are having difficulties related to versions of the dependencies (pyopengltk, PyOpenGL, Pillow, NumPy), a [pipenv](https://docs.pipenv.org/en/latest/) pipfile is provided to set up a [virtualenv](https://virtualenv.pypa.io/en/latest/).
 It can be used as follows:
 
 ```bash

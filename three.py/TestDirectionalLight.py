@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from core import *
 from cameras import *
 from lights import AmbientLight, DirectionalLight
@@ -59,6 +61,14 @@ class TestDirectionalLight(Base):
         
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestDirectionalLight().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestDirectionalLight(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

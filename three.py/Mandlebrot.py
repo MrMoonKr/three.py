@@ -1,5 +1,3 @@
-import pygame
-
 from core import *
 from cameras import *
 from geometry import *
@@ -100,14 +98,12 @@ class TestMandlebrot(Base):
         
     def update(self):
         
-        if self.input.isKeyDown(pygame.K_ESCAPE):
+        if self.input.isKeyDown("Escape"):
             self.running = False
 
         # save screenshot
-        if self.input.isKeyDown(pygame.K_z):
-            timeString = str( int(1000 * time.time()) )
-            fileName = "image-" + timeString + ".png"
-            pygame.image.save(self.screen, fileName)
+        if self.input.isKeyDown("z"):
+            fileName = self.saveScreenshot()
             print("Image saved to: " + fileName)
 
         uniformData = self.mesh.material.uniformList
@@ -117,30 +113,30 @@ class TestMandlebrot(Base):
         scrollSpeed = 0.005
         moveAmountX *= scrollSpeed
         moveAmountY *= scrollSpeed
-        if self.input.isKeyPressed(pygame.K_a):
+        if self.input.isKeyPressed("a"):
             uniformData["center"].value[0] -= moveAmountX
-        if self.input.isKeyPressed(pygame.K_d):
+        if self.input.isKeyPressed("d"):
             uniformData["center"].value[0] += moveAmountX
-        if self.input.isKeyPressed(pygame.K_w):
+        if self.input.isKeyPressed("w"):
             uniformData["center"].value[1] += moveAmountY
-        if self.input.isKeyPressed(pygame.K_s):
+        if self.input.isKeyPressed("s"):
             uniformData["center"].value[1] -= moveAmountY
 
         # zoom in/out
         zoomAmount = 1.01
-        if self.input.isKeyPressed(pygame.K_i):
+        if self.input.isKeyPressed("i"):
             uniformData["viewportSize"].value[0] /= zoomAmount
             uniformData["viewportSize"].value[1] /= zoomAmount
-        if self.input.isKeyPressed(pygame.K_o):
+        if self.input.isKeyPressed("o"):
             uniformData["viewportSize"].value[0] *= zoomAmount
             uniformData["viewportSize"].value[1] *= zoomAmount
 
         # increment time variable (activates color shift)
-        if self.input.isKeyPressed(pygame.K_c):
+        if self.input.isKeyPressed("c"):
             uniformData["time"].value += 0.001
             
         # reset to default view
-        if self.input.isKeyDown(pygame.K_r):
+        if self.input.isKeyDown("r"):
             uniformData["center"].value = [-0.5, 0]
             uniformData["viewportSize"].value = [4,4]
             uniformData["time"].value = 0
@@ -168,7 +164,7 @@ class TestMandlebrot(Base):
                 self.recenter = False
  
         # print window coordinates
-        if self.input.isKeyDown(pygame.K_p):
+        if self.input.isKeyDown("p"):
             center = uniformData["center"].value
             viewportSize = uniformData["viewportSize"].value
             xMin = "{:.8f}".format( center[0] - viewportSize[0] )
@@ -190,6 +186,15 @@ class TestMandlebrot(Base):
 
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestMandlebrot().run()
+_BaseGLApp = GLApp
 
+class GLApp(_BaseGLApp):
+    def __init__(self):
+        super().__init__(TestMandlebrot)
+
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

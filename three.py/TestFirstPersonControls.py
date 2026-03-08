@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from core import *
 from cameras import *
 from geometry import *
@@ -43,6 +45,14 @@ class TestFirstPersonControls(Base):
             
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestFirstPersonControls().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestFirstPersonControls(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

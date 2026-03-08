@@ -34,6 +34,8 @@ class Sphere(Shape):
 
         distanceVec = other.center - self.center
         distanceLen = math.sqrt(distanceVec[0]**2+distanceVec[1]**2+distanceVec[2]**2)
+        if distanceLen == 0:
+            return (self.radius + other.radius, 0, 0)
 
         minTransLen = distanceLen - self.radius - other.radius
 

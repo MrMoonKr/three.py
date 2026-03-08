@@ -1,4 +1,5 @@
-import pygame
+import tkinter as tk
+
 from core import *
 from cameras import *
 from geometry import *
@@ -56,10 +57,10 @@ class TestParticleEngine(Base):
             self.camera.setAspectRatio( size["width"]/size["height"] )
             self.renderer.setViewportSize(size["width"], size["height"])
 
-        if self.input.isKeyDown(pygame.K_s):
+        if self.input.isKeyDown("s"):
             self.engine.stop()
 
-        if self.input.isKeyDown(pygame.K_r):
+        if self.input.isKeyDown("r"):
             self.engine.reset()
 
 
@@ -67,6 +68,14 @@ class TestParticleEngine(Base):
         
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestParticleEngine().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestParticleEngine(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,6 @@
-import pygame
+from pathlib import Path
+
+from PIL import Image, ImageDraw, ImageFont
 
 # note: font/background color should be specified with ranges [0-255], not [0-1]
 # note: if image width/height not declared, will be set according to rendered text size
@@ -11,9 +13,16 @@ class TextImage(object):
         
         self.text = text
         if fontFileName is None:
-            self.font = pygame.font.SysFont("Arial", fontSize)
+            defaultFont = Path(__file__).resolve().parent.parent / "fonts" / "LiberationSans.ttf"
+            try:
+                self.font = ImageFont.truetype(str(defaultFont), fontSize)
+            except OSError:
+                self.font = ImageFont.load_default()
         else:
-            self.font = pygame.font.Font(fontFileName, fontSize)
+            fontPath = Path(fontFileName)
+            if not fontPath.exists():
+                fontPath = Path(__file__).resolve().parent.parent / fontPath
+            self.font = ImageFont.truetype(str(fontPath), fontSize)
 
         self.fontColor = fontColor
         self.backgroundColor = backgroundColor
@@ -29,10 +38,11 @@ class TextImage(object):
     # can call to recaluate surface if text has changed
     def renderImage(self):
     
-        # render text to surface
-        fontSurface = self.font.render(self.text, self.antialias, self.fontColor)        
-        # determine size of rendered text for alignment
-        (textWidth, textHeight) = self.font.size(self.text)
+        tempImage = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+        tempDraw = ImageDraw.Draw(tempImage)
+        left, top, right, bottom = tempDraw.textbbox((0, 0), self.text, font=self.font)
+        textWidth = right - left
+        textHeight = bottom - top
 
         # if image dimensions are not specified, use font surface size as default
         if self.width is None:
@@ -41,12 +51,10 @@ class TextImage(object):
             self.height = textHeight
             
         # create image with transparency channel
-        self.surface = pygame.Surface( (self.width, self.height), pygame.SRCALPHA )
+        background = (0, 0, 0, 0) if self.transparent else tuple(self.backgroundColor) + (255,)
+        self.surface = Image.new("RGBA", (self.width, self.height), background)
+        draw = ImageDraw.Draw(self.surface)
         
-        # background color used when not transparent
-        if not self.transparent:
-            self.surface.fill( self.backgroundColor )
-
         # values used for alignment; 
         #  only has an effect if image size is set larger than rendered text size
         if (self.alignHorizontal == "LEFT"):
@@ -62,7 +70,7 @@ class TextImage(object):
         elif (self.alignVertical == "BOTTOM"):
             alignY = 1.0
             
-        textRect  = fontSurface.get_rect( topleft=(alignX*(self.width-textWidth),alignY*(self.height-textHeight) ) )
-
-        self.surface.blit( fontSurface, textRect )
+        textX = alignX * (self.width - textWidth) - left
+        textY = alignY * (self.height - textHeight) - top
+        draw.text((textX, textY), self.text, font=self.font, fill=tuple(self.fontColor))
 

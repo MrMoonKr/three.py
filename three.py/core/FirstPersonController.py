@@ -1,5 +1,4 @@
 import numpy as np
-import pygame
 from math import sin, cos
 from mathutils import Matrix
 
@@ -29,16 +28,16 @@ class FirstPersonController(object):
         # customizable key mappings
         # standard controls (WASDRF, QETG)     
 
-        self.KEY_MOVE_FORWARDS  = pygame.K_w
-        self.KEY_MOVE_BACKWARDS = pygame.K_s
-        self.KEY_MOVE_LEFT      = pygame.K_a
-        self.KEY_MOVE_RIGHT     = pygame.K_d
-        self.KEY_MOVE_UP        = pygame.K_r
-        self.KEY_MOVE_DOWN      = pygame.K_f
-        self.KEY_TURN_LEFT      = pygame.K_q
-        self.KEY_TURN_RIGHT     = pygame.K_e
-        self.KEY_LOOK_UP        = pygame.K_t
-        self.KEY_LOOK_DOWN      = pygame.K_g
+        self.KEY_MOVE_FORWARDS  = "w"
+        self.KEY_MOVE_BACKWARDS = "s"
+        self.KEY_MOVE_LEFT      = "a"
+        self.KEY_MOVE_RIGHT     = "d"
+        self.KEY_MOVE_UP        = "r"
+        self.KEY_MOVE_DOWN      = "f"
+        self.KEY_TURN_LEFT      = "q"
+        self.KEY_TURN_RIGHT     = "e"
+        self.KEY_LOOK_UP        = "t"
+        self.KEY_LOOK_DOWN      = "g"
 
     def setSpeed(self, unitsPerSecond=1, degreesPerSecond=60):
         self.unitsPerSecond = unitsPerSecond

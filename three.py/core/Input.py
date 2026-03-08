@@ -1,10 +1,8 @@
-import pygame
-
 class Input(object):
 
     def __init__(self):
         self.keyDownList     = []
-        self.keyPressedList  = []
+        self.keyPressedList  = set()
         self.keyUpList       = []
         self.mouseButtonDown    = False
         self.mouseButtonPressed = False
@@ -14,32 +12,44 @@ class Input(object):
         self.windowResize       = False
         self.windowWidth        = None
         self.windowHeight       = None
-        
+        self.mousePosition      = (0, 0)
+
+        self._pendingKeyDown    = []
+        self._pendingKeyUp      = []
+        self._pendingResize     = None
+        self._pendingMouseDown  = False
+        self._pendingMouseUp    = False
+
+    def attach(self, widget):
+        widget.bind("<Map>", self._focusWidget, add="+")
+        widget.bind("<Enter>", self._focusWidget, add="+")
+        widget.bind("<KeyPress>", self._onKeyDown, add="+")
+        widget.bind("<KeyRelease>", self._onKeyUp, add="+")
+        widget.bind("<ButtonPress>", self._onMouseDown, add="+")
+        widget.bind("<ButtonRelease>", self._onMouseUp, add="+")
+        widget.bind("<Motion>", self._onMouseMove, add="+")
+        widget.bind("<Configure>", self._onResize, add="+")
+
     def update(self):
         self.keyDownList = []
         self.keyUpList   = []
         self.mouseButtonDown = False
         self.mouseButtonUp   = False
         self.windowResize    = False
-        for event in pygame.event.get(): # checks input events (discrete)
-            if event.type == pygame.KEYDOWN:
-                self.keyDownList.append( event.key )
-                self.keyPressedList.append( event.key )
-            elif event.type == pygame.KEYUP:
-                self.keyPressedList.remove( event.key )
-                self.keyUpList.append( event.key )
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.mouseButtonDown = True
-                self.mouseButtonPressed = True
-            elif event.type == pygame.MOUSEBUTTONUP:
-                self.mouseButtonPressed = False
-                self.mouseButtonUp = True
-            elif event.type == pygame.QUIT:
-                self.quitStatus = True
-            elif event.type == pygame.VIDEORESIZE:
-                self.windowResize = True
-                self.windowWidth = event.w
-                self.windowHeight = event.h
+        self.keyDownList = self._pendingKeyDown
+        self.keyUpList = self._pendingKeyUp
+        self.mouseButtonDown = self._pendingMouseDown
+        self.mouseButtonUp = self._pendingMouseUp
+
+        self._pendingKeyDown = []
+        self._pendingKeyUp = []
+        self._pendingMouseDown = False
+        self._pendingMouseUp = False
+
+        if self._pendingResize is not None:
+            self.windowResize = True
+            self.windowWidth, self.windowHeight = self._pendingResize
+            self._pendingResize = None
 
     def isKeyDown(self, keyCode):
         return keyCode in self.keyDownList
@@ -60,7 +70,7 @@ class Input(object):
         return self.mouseButtonUp
 
     def getMousePosition(self):
-        return pygame.mouse.get_pos()
+        return self.mousePosition
 
     def quit(self):
         return self.quitStatus
@@ -70,4 +80,36 @@ class Input(object):
         
     def getWindowSize(self):
         return { "width": self.windowWidth, "height": self.windowHeight }
-        
+
+    def setQuit(self, status):
+        self.quitStatus = status
+
+    def _focusWidget(self, event):
+        event.widget.focus_set()
+
+    def _onKeyDown(self, event):
+        key = event.keysym
+        if key not in self.keyPressedList:
+            self.keyPressedList.add(key)
+            self._pendingKeyDown.append(key)
+
+    def _onKeyUp(self, event):
+        key = event.keysym
+        self.keyPressedList.discard(key)
+        self._pendingKeyUp.append(key)
+
+    def _onMouseDown(self, event):
+        self.mousePosition = (event.x, event.y)
+        self.mouseButtonPressed = True
+        self._pendingMouseDown = True
+
+    def _onMouseUp(self, event):
+        self.mousePosition = (event.x, event.y)
+        self.mouseButtonPressed = False
+        self._pendingMouseUp = True
+
+    def _onMouseMove(self, event):
+        self.mousePosition = (event.x, event.y)
+
+    def _onResize(self, event):
+        self._pendingResize = (event.width, event.height)

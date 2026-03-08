@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from math import sin, cos
 
 from core import *
@@ -73,6 +75,14 @@ class TestOBJGeometry(Base):
         
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestOBJGeometry().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestOBJGeometry(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

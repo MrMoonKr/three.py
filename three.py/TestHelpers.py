@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from core import *
 from lights import AmbientLight, DirectionalLight
 from cameras import *
@@ -55,6 +57,14 @@ class TestHelpers(Base):
             
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestHelpers().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestHelpers(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

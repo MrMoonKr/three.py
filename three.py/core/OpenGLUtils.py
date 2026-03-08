@@ -1,7 +1,9 @@
 # static methods to load and compile OpenGL shader programs
 from OpenGL.GL import *
 
-import pygame # for loading images / texture data
+import numpy as np
+from PIL import Image, ImageOps
+from pathlib import Path
 
 class OpenGLUtils(object):
 
@@ -62,16 +64,14 @@ class OpenGLUtils(object):
     @staticmethod
     def initializeTexture(imageFileName):
         # load image from file
-        surface = pygame.image.load(imageFileName)
-        return OpenGLUtils.initializeSurface(surface)
+        imagePath = OpenGLUtils._resolvePath(imageFileName)
+        with Image.open(imagePath) as image:
+            return OpenGLUtils.initializeSurface(image.copy())
         
     @staticmethod
     def initializeSurface(surface):
         # transfer image to string buffer
-        textureData = pygame.image.tostring(surface, "RGBA", 1)
-        width = surface.get_width()
-        height = surface.get_height()
-        # glEnable(GL_TEXTURE_2D)
+        textureData, width, height = OpenGLUtils._surfaceToTextureData(surface)
         texid = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, texid)
 
@@ -91,11 +91,34 @@ class OpenGLUtils(object):
 
     @staticmethod
     def updateSurface(surface, textureID):
-        textureData = pygame.image.tostring(surface, "RGBA", 1)
-        width = surface.get_width()
-        height = surface.get_height() 
+        textureData, width, height = OpenGLUtils._surfaceToTextureData(surface)
         glBindTexture(GL_TEXTURE_2D, textureID)
         # send image data to texture buffer
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
                      0, GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+
+    @staticmethod
+    def _surfaceToTextureData(surface):
+        if isinstance(surface, Image.Image):
+            image = ImageOps.flip(surface.convert("RGBA"))
+            width, height = image.size
+            return image.tobytes(), width, height
+
+        array = np.asarray(surface, dtype=np.uint8)
+        if array.ndim == 2:
+            array = np.stack([array, array, array, np.full_like(array, 255)], axis=-1)
+        elif array.shape[2] == 3:
+            alpha = np.full((array.shape[0], array.shape[1], 1), 255, dtype=np.uint8)
+            array = np.concatenate([array, alpha], axis=2)
+
+        array = np.flipud(array)
+        height, width = array.shape[:2]
+        return np.ascontiguousarray(array).tobytes(), width, height
+
+    @staticmethod
+    def _resolvePath(fileName):
+        path = Path(fileName)
+        if path.exists():
+            return path
+        return Path(__file__).resolve().parent.parent / path
                      

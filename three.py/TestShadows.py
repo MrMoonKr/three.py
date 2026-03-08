@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from core import Base, Renderer, Scene, RenderTarget, Mesh, FirstPersonController, OpenGLUtils
 from cameras import PerspectiveCamera
 from lights import AmbientLight, DirectionalLight
@@ -90,6 +92,14 @@ class TestShadows(Base):
         
         self.renderer.render(self.scene, self.camera)
                     
-# instantiate and run the program
-TestShadows().run()
+class GLApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.base = TestShadows(self)
 
+def main() -> None:
+    app = GLApp()
+    app.mainloop()
+
+if __name__ == "__main__":
+    main()

@@ -12,7 +12,8 @@ name = "pypi"
 [packages]
 
 pyopengl = "*"
-pygame = "*"
+pyopengltk = "*"
+pillow = "*"
 numpy = "*"
 
 

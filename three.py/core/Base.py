@@ -1,88 +1,170 @@
-import pygame
-import sys
+import os
 import time
+import tkinter as tk
+from pathlib import Path
 
-from core import Input
+from OpenGL.GL import GL_PACK_ALIGNMENT, GL_RGBA, GL_UNSIGNED_BYTE, glPixelStorei, glReadPixels
+from PIL import Image
+from pyopengltk import OpenGLFrame
 
-class Base(object):
+from core.Input import Input
 
-    def __init__(self):
 
-        # initialize the pygame display and OpenGL context
-        pygame.display.init()
-        pygame.font.init()
-        
-        # load a custom icon
-        pygame.display.set_icon(pygame.image.load("images/icon.png"))
-        
-        # initialize buffers to perform antialiasing
-        pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS, 1)
-        pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES, 4)
-    
-        self.setWindowTitle("   ")
-        self.setWindowSize(640, 640)
+class Base(OpenGLFrame):
 
-        self.clock = pygame.time.Clock()
+    def __init__(self, master):
+        self.screenSize = (900, 600)
         self.deltaTime = 0
         self.input = Input()
         self.running = True
 
-    # set window title
-    def setWindowTitle(self, text):
-        pygame.display.set_caption(text)
+        self._initialized = False
+        self._lastTime = None
+        self._currentFps = 0
+        self._pendingScreenshot = None
+        self._iconImage = None
+        self._smokeFrameLimit = int(os.environ.get("THREEPY_SMOKE_FRAMES", "0") or "0")
+        self._smokeTimeoutMs = int(os.environ.get("THREEPY_SMOKE_TIMEOUT_MS", "0") or "0")
+        self._frameCount = 0
+        self._initializationError = None
 
-    # WARNING: calling this method loses the original OpenGL context;
-    #   only use before calling OpenGL functions
+        super().__init__(master, width=self.screenSize[0], height=self.screenSize[1])
+        self.animate = 1
+        self.pack(fill="both", expand=True)
+        self.focus_set()
+
+        self.input.attach(self)
+        self.winfo_toplevel().protocol("WM_DELETE_WINDOW", self._requestQuit)
+
+        self.setWindowTitle("   ")
+        self.setWindowSize(640, 640)
+        self._setWindowIcon()
+
+        if self._smokeTimeoutMs > 0:
+            self.after(self._smokeTimeoutMs, self._requestQuit)
+
+    def setWindowTitle(self, text):
+        self.winfo_toplevel().title(text)
+
     def setWindowSize(self, width, height):
         self.screenSize = (width, height)
-        self.displayFlags = pygame.DOUBLEBUF | pygame.OPENGL | pygame.RESIZABLE
-        self.screen = pygame.display.set_mode( self.screenSize, self.displayFlags )
-        
-    # implement by extending class
+        self.configure(width=width, height=height)
+        self.winfo_toplevel().geometry(f"{width}x{height}")
+
+    def centerWindow(self):
+        window = self.winfo_toplevel()
+        window.update_idletasks()
+
+        width, height = self.screenSize
+        screenWidth = window.winfo_screenwidth()
+        screenHeight = window.winfo_screenheight()
+
+        x = max((screenWidth - width) // 2, 0)
+        y = max((screenHeight - height) // 2, 0)
+        window.geometry(f"{width}x{height}+{x}+{y}")
+
     def initialize(self):
         pass
-    
-    # implement by extending class
+
     def update(self):
         pass
 
-    def run(self):
+    def initgl(self):
+        self._initializeContext()
 
-        self.initialize()
-        
-        while self.running:
-        
-            # update input state (down, pressed, up)
-            self.input.update()
-    
-            if self.input.quit():
-                self.running = False
+    def redraw(self):
+        self._renderFrame()
 
-            # debug tools
-            
-            # print FPS (Ctrl+F)
-            if (self.input.isKeyPressed(pygame.K_LCTRL) or self.input.isKeyPressed(pygame.K_RCTRL)) and self.input.isKeyDown(pygame.K_f):
-                fps = self.clock.get_fps()
-                print( "FPS: " + str(int(fps)) )
-                
-            # save screenshot (Ctrl+S)
-            if (self.input.isKeyPressed(pygame.K_LCTRL) or self.input.isKeyPressed(pygame.K_RCTRL)) and self.input.isKeyDown(pygame.K_s):
-                timeString = str( int(1000 * time.time()) )
-                fileName = "image-" + timeString + ".png"
-                pygame.image.save(self.screen, fileName)
-                
-            self.deltaTime = self.clock.get_time() / 1000.0
-            
-            self.update()
-            
-            # display image on screen
-            pygame.display.flip()
+    def saveScreenshot(self, fileName=None):
+        if fileName is None:
+            timeString = str(int(1000 * time.time()))
+            fileName = "image-" + timeString + ".png"
+        self._pendingScreenshot = fileName
+        return fileName
 
-            # limit to 60 FPS
-            self.clock.tick(60)
+    def _setWindowIcon(self):
+        iconPath = Path(__file__).resolve().parent.parent / "images" / "icon.png"
+        if not iconPath.exists():
+            return
+        try:
+            self._iconImage = tk.PhotoImage(file=str(iconPath))
+            self.winfo_toplevel().iconphoto(True, self._iconImage)
+        except tk.TclError:
+            self._iconImage = None
 
-        # end of program
-        pygame.quit()
-        sys.exit()
-        
-    
+    def _initializeContext(self):
+        if self._initialized:
+            return
+        try:
+            self.initialize()
+            self._lastTime = time.perf_counter()
+            self._initialized = True
+        except Exception as error:
+            self._initializationError = error
+            self.running = False
+            self.after_idle(self.winfo_toplevel().destroy)
+            raise
+
+    def _renderFrame(self):
+        if self._initializationError is not None:
+            self.running = False
+            self.after_idle(self.winfo_toplevel().destroy)
+            return
+
+        if not self.running:
+            self.after_idle(self.winfo_toplevel().destroy)
+            return
+
+        self.input.update()
+
+        if self.input.quit():
+            self.running = False
+            self.after_idle(self.winfo_toplevel().destroy)
+            return
+
+        currentTime = time.perf_counter()
+        if self._lastTime is None:
+            self._lastTime = currentTime
+        self.deltaTime = currentTime - self._lastTime
+        self._lastTime = currentTime
+        if self.deltaTime > 0:
+            self._currentFps = 1.0 / self.deltaTime
+
+        ctrlPressed = self.input.isKeyPressed("Control_L") or self.input.isKeyPressed("Control_R")
+
+        if ctrlPressed and self.input.isKeyDown("f"):
+            print("FPS: " + str(int(self._currentFps)))
+
+        if ctrlPressed and self.input.isKeyDown("s"):
+            fileName = self.saveScreenshot()
+            print("Image saved to: " + fileName)
+
+        self.update()
+        self._frameCount += 1
+
+        if self._smokeFrameLimit > 0 and self._frameCount >= self._smokeFrameLimit:
+            self.running = False
+
+        if self._pendingScreenshot is not None:
+            self._captureScreenshot(self._pendingScreenshot)
+            self._pendingScreenshot = None
+
+    def _captureScreenshot(self, fileName):
+        width = max(1, self.winfo_width())
+        height = max(1, self.winfo_height())
+        glPixelStorei(GL_PACK_ALIGNMENT, 1)
+        pixelData = glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE)
+        image = Image.frombytes("RGBA", (width, height), pixelData)
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)
+        image.save(fileName)
+
+    def _requestQuit(self):
+        self.input.setQuit(True)
+        self.running = False
+
+
+class BaseApp(tk.Tk):
+
+    def __init__(self, baseClass=Base):
+        super().__init__()
+        self.base = baseClass(self)
