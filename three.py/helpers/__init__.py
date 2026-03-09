@@ -4,4 +4,5 @@ from helpers.BoxHelper import *
 from helpers.VertexNormalHelper import *
 from helpers.DirectionalLightHelper import *
 from helpers.PointLightHelper import *
+from helpers.HemisphereLightHelper import *
 from helpers.OrthographicCameraHelper import *

@@ -80,6 +80,7 @@ class SurfaceBasicMaterial(Material):
             bool isAmbient;
             bool isDirectional;
             bool isPoint;
+            bool isHemisphere;
             
             // used by all lights
             float strength;
@@ -88,8 +89,11 @@ class SurfaceBasicMaterial(Material):
             // used by point light
             vec3 position;
 
-            // used by directional light
+            // used by directional and hemisphere lights
             vec3 direction;
+
+            // used by hemisphere light
+            vec3 groundColor;
         };
 
         uniform Light light0;
@@ -117,6 +121,13 @@ class SurfaceBasicMaterial(Material):
                 float cosAngle = max( dot(unitNormal, lightDirection), 0.0 );
                 float attenuation = 1.0;
                 return light.color * light.strength * cosAngle * attenuation;
+            }
+            else if ( light.isHemisphere )
+            {
+                vec3 unitNormal = normalize(fragNormal);
+                float blend = dot(unitNormal, light.direction) * 0.5 + 0.5;
+                vec3 hemisphereColor = mix(light.groundColor, light.color, blend);
+                return hemisphereColor * light.strength;
             }
             else // occurs if no data set for this light; bool values default to 0
             {
@@ -152,10 +163,11 @@ class SurfaceBasicMaterial(Material):
 
             if ( useLight )
             {
-                Light lightArray[4] = {light0, light1, light2, light3};
                 vec3 totalLight = vec3(0,0,0);
-                for (int n = 0; n < 4; n++)
-                    totalLight += lightCalculation( lightArray[n], position, normal );
+                totalLight += lightCalculation( light0, position, normal );
+                totalLight += lightCalculation( light1, position, normal );
+                totalLight += lightCalculation( light2, position, normal );
+                totalLight += lightCalculation( light3, position, normal );
                 totalLight = min( totalLight, vec3(1,1,1) );
                 baseColor *= vec4( totalLight, 1 );
             }

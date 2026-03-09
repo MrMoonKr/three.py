@@ -18,6 +18,7 @@ class Light(Object3D):
         self.uniformList.addUniform( Uniform("bool", self.name + ".isAmbient", 0),     indexName="isAmbient" )
         self.uniformList.addUniform( Uniform("bool", self.name + ".isDirectional", 0), indexName="isDirectional" )
         self.uniformList.addUniform( Uniform("bool", self.name + ".isPoint", 0),       indexName="isPoint" )
+        self.uniformList.addUniform( Uniform("bool", self.name + ".isHemisphere", 0),  indexName="isHemisphere" )
         
         # default light color
         self.uniformList.addUniform( Uniform("float", self.name + ".strength", strength), indexName="strength" )
@@ -28,6 +29,7 @@ class Light(Object3D):
         # store position and direction in uniforms
         self.uniformList.addUniform( Uniform("vec3", self.name + ".position", position), indexName="position" )
         self.uniformList.addUniform( Uniform("vec3", self.name + ".direction", [0,0,0]), indexName="direction" )
+        self.uniformList.addUniform( Uniform("vec3", self.name + ".groundColor", [0,0,0]), indexName="groundColor" )
         
         # store light position in matrix to simplify light movement (PointLight)
         # and to adjust position of helper meshes (DirectionalLightHelper, PointLightHelper)
