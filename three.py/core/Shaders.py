@@ -54,7 +54,7 @@ def getShaderProgramSources(shaderName):
     fragmentShader = resolveShaderIncludes(shader["fragmentShader"])
     return vertexShader, fragmentShader
 
-
+# "fog_vertex_pars"
 registerShaderChunk(
     "fog_vertex_pars",
     """
@@ -62,7 +62,7 @@ registerShaderChunk(
     out float cameraDistance;
     """,
 )
-
+# "fog_vertex"
 registerShaderChunk(
     "fog_vertex",
     """
@@ -72,7 +72,7 @@ registerShaderChunk(
     }
     """,
 )
-
+# "fog_fragment_pars"
 registerShaderChunk(
     "fog_fragment_pars",
     """
@@ -83,7 +83,7 @@ registerShaderChunk(
     in float cameraDistance;
     """,
 )
-
+# "fog_fragment"
 registerShaderChunk(
     "fog_fragment",
     """
@@ -95,6 +95,7 @@ registerShaderChunk(
     """,
 )
 
+# "shadow_vertex_pars"
 registerShaderChunk(
     "shadow_vertex_pars",
     """
@@ -104,7 +105,7 @@ registerShaderChunk(
     out vec4 positionFromShadowLight;
     """,
 )
-
+# "shadow_vertex"
 registerShaderChunk(
     "shadow_vertex",
     """
@@ -114,7 +115,7 @@ registerShaderChunk(
     }
     """,
 )
-
+# "shadow_fragment_pars"
 registerShaderChunk(
     "shadow_fragment_pars",
     """
@@ -126,7 +127,7 @@ registerShaderChunk(
     uniform vec3 shadowLightDirection;
     """,
 )
-
+# "shadow_fragment"
 registerShaderChunk(
     "shadow_fragment",
     """
@@ -145,6 +146,7 @@ registerShaderChunk(
     """,
 )
 
+# "light_struct"
 registerShaderChunk(
     "light_struct",
     """
@@ -169,7 +171,7 @@ registerShaderChunk(
     uniform Light light3;
     """,
 )
-
+# "light_calculation"
 registerShaderChunk(
     "light_calculation",
     """
@@ -207,7 +209,7 @@ registerShaderChunk(
     }
     """,
 )
-
+# "line_basic_vertex_pars"
 registerShaderChunk(
     "line_basic_vertex_pars",
     """
@@ -225,7 +227,7 @@ registerShaderChunk(
     #include <fog_vertex_pars>
     """,
 )
-
+# "line_basic_vertex"
 registerShaderChunk(
     "line_basic_vertex",
     """
@@ -236,7 +238,7 @@ registerShaderChunk(
     #include <fog_vertex>
     """,
 )
-
+# "line_basic_fragment_pars"
 registerShaderChunk(
     "line_basic_fragment_pars",
     """
@@ -254,7 +256,7 @@ registerShaderChunk(
     #include <fog_fragment_pars>
     """,
 )
-
+# "line_basic_fragment"
 registerShaderChunk(
     "line_basic_fragment",
     """
@@ -276,6 +278,7 @@ registerShaderChunk(
     """,
 )
 
+# "surface_basic_vertex_pars"
 registerShaderChunk(
     "surface_basic_vertex_pars",
     """
@@ -297,7 +300,7 @@ registerShaderChunk(
     #include <shadow_vertex_pars>
     """,
 )
-
+# "surface_basic_vertex"
 registerShaderChunk(
     "surface_basic_vertex",
     """
@@ -313,7 +316,7 @@ registerShaderChunk(
     #include <fog_vertex>
     """,
 )
-
+# "surface_basic_fragment_pars"
 registerShaderChunk(
     "surface_basic_fragment_pars",
     """
@@ -340,7 +343,7 @@ registerShaderChunk(
     #include <shadow_fragment_pars>
     """,
 )
-
+# "surface_basic_fragment"
 registerShaderChunk(
     "surface_basic_fragment",
     """
@@ -373,6 +376,7 @@ registerShaderChunk(
     """,
 )
 
+# "basic" shader program
 registerShaderLib(
     "basic",
     """
@@ -393,6 +397,7 @@ registerShaderLib(
     """,
 )
 
+# "line_basic" shader program
 registerShaderLib(
     "line_basic",
     """
@@ -413,6 +418,7 @@ registerShaderLib(
     """,
 )
 
+# "dashed" shader program
 registerShaderLib(
     "dashed",
     """
@@ -433,6 +439,7 @@ registerShaderLib(
     """,
 )
 
+# "points_vertex_pars"
 registerShaderChunk(
     "points_vertex_pars",
     """
@@ -449,7 +456,7 @@ registerShaderChunk(
     uniform mat4 modelMatrix;
     """,
 )
-
+# "points_vertex"
 registerShaderChunk(
     "points_vertex",
     """
@@ -464,7 +471,7 @@ registerShaderChunk(
     gl_Position = projectionMatrix * eyePosition;
     """,
 )
-
+# "points_fragment_pars"
 registerShaderChunk(
     "points_fragment_pars",
     """
@@ -479,7 +486,7 @@ registerShaderChunk(
     uniform float alphaTest;
     """,
 )
-
+# "points_fragment"
 registerShaderChunk(
     "points_fragment",
     """
@@ -498,6 +505,28 @@ registerShaderChunk(
     """,
 )
 
+# "point_basic"
+registerShaderLib(
+    "point_basic",
+    """
+    #include <points_vertex_pars>
+
+    void main()
+    {
+        #include <points_vertex>
+    }
+    """,
+    """
+    #include <points_fragment_pars>
+
+    void main()
+    {
+        #include <points_fragment>
+    }
+    """,
+)
+
+# "points" shader program
 registerShaderLib(
     "points",
     """
@@ -518,6 +547,7 @@ registerShaderLib(
     """,
 )
 
+# "shadow_vertex_pars_only"
 registerShaderChunk(
     "shadow_vertex_pars_only",
     """
@@ -527,14 +557,14 @@ registerShaderChunk(
     uniform mat4 modelMatrix;
     """,
 )
-
+# "shadow_vertex_main"
 registerShaderChunk(
     "shadow_vertex_main",
     """
     gl_Position = shadowProjectionMatrix * shadowViewMatrix * modelMatrix * vec4(vertexPosition, 1);
     """,
 )
-
+# "shadow_fragment_main"
 registerShaderChunk(
     "shadow_fragment_main",
     """
@@ -542,6 +572,7 @@ registerShaderChunk(
     """,
 )
 
+# "shadow" shader program
 registerShaderLib(
     "shadow",
     """
@@ -560,6 +591,7 @@ registerShaderLib(
     """,
 )
 
+# "sprite_vertex_pars"
 registerShaderChunk(
     "sprite_vertex_pars",
     """
@@ -574,7 +606,7 @@ registerShaderChunk(
     uniform mat4 modelMatrix;
     """,
 )
-
+# "sprite_vertex"
 registerShaderChunk(
     "sprite_vertex",
     """
@@ -593,7 +625,7 @@ registerShaderChunk(
     gl_Position = projectionMatrix * billboardMatrix * vec4( position, 1 );
     """,
 )
-
+# "sprite_fragment_pars"
 registerShaderChunk(
     "sprite_fragment_pars",
     """
@@ -606,7 +638,7 @@ registerShaderChunk(
     uniform float alphaTest;
     """,
 )
-
+# "sprite_fragment"
 registerShaderChunk(
     "sprite_fragment",
     """
@@ -617,6 +649,7 @@ registerShaderChunk(
     """,
 )
 
+# "sprite" shader program
 registerShaderLib(
     "sprite",
     """
@@ -637,6 +670,7 @@ registerShaderLib(
     """,
 )
 
+# "surface_basic" shader program
 registerShaderLib(
     "surface_basic",
     """
@@ -657,22 +691,3 @@ registerShaderLib(
     """,
 )
 
-registerShaderLib(
-    "point_basic",
-    """
-    #include <points_vertex_pars>
-
-    void main()
-    {
-        #include <points_vertex>
-    }
-    """,
-    """
-    #include <points_fragment_pars>
-
-    void main()
-    {
-        #include <points_fragment>
-    }
-    """,
-)
