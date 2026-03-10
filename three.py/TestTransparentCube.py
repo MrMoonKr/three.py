@@ -20,7 +20,7 @@ class TestTransparentCube(Base):
 
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 7)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         # note: add meshes back-to-front
         gridTexture  = OpenGLUtils.initializeTexture("images/color-grid.png")

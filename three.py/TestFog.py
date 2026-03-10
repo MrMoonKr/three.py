@@ -26,7 +26,7 @@ class TestFog(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 2, 15)
         self.camera.transform.lookAt(0, 2, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 2, 0])
 
         floorMesh = GridHelper(size=10, divisions=10, gridColor=[0,0,0], centerColor=[1,0,0])
         floorMesh.transform.rotateX(-3.14/2, Matrix.LOCAL)

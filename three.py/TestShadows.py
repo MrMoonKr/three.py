@@ -9,6 +9,11 @@ from mathutils import Matrix
 from helpers import DirectionalLightHelper, OrthographicCameraHelper
 
 class TestShadows(Base):
+
+    def _logShaderBindings(self, bindings):
+        print("Shadow test shader bindings:")
+        for label, material in bindings:
+            print(f"  {label}: {material.__class__.__name__} -> {material.shaderName}")
     
     def initialize(self):
 
@@ -29,7 +34,7 @@ class TestShadows(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 3, 5)
         self.camera.transform.lookAt(0, 1, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 1, 0])
 
         self.scene.add( AmbientLight(strength=0.5) )
         
@@ -78,6 +83,15 @@ class TestShadows(Base):
         self.box.setCastShadow()
         self.box.setReceiveShadow()
         self.scene.add( self.box )
+
+        self._logShaderBindings([
+            ("floor", floor.material),
+            ("backWall", backWall.material),
+            ("sideWall", sideWall.material),
+            ("sphere", sphere.material),
+            ("box", self.box.material),
+            ("shadowPass", directionalLight.shadowMaterial),
+        ])
 
     def update(self):
 

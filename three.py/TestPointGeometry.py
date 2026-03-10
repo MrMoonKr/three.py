@@ -22,7 +22,6 @@ class TestPointGeometry(Base):
         self.scene = Scene()
         
         self.camera = PerspectiveCamera()
-        self.cameraControls = FirstPersonController(self.input, self.camera)
         
         pointTexture  = OpenGLUtils.initializeTexture("images/particle-star.png")
 
@@ -56,6 +55,7 @@ class TestPointGeometry(Base):
         self.scene.add(self.pointMesh)
 
         self.camera.transform.setPosition(0, 2, 7)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 1, 0])
         
     def update(self):
         

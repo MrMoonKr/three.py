@@ -31,7 +31,7 @@ class TestCollisionDetection(Base):
         self.camera.transform.setPosition(0, 1, 6)
         self.camera.transform.lookAt(0, 0, 0)
         self.camera.transform.setPosition(0,9,25)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         #seperate geometries for different sized spheres
         geometry = SphereGeometry()

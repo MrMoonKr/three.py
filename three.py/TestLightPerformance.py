@@ -31,7 +31,7 @@ class TestLightPerformance(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 15)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.boxList = []
 

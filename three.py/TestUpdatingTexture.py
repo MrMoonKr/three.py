@@ -25,7 +25,7 @@ class TestUpdatingTexture(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 2)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.canvas = np.full((128, 128, 4), 255, dtype=np.uint8)
         self.canvasID = OpenGLUtils.initializeSurface(self.canvas)

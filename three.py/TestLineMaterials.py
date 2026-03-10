@@ -24,7 +24,7 @@ class TestLineMaterials(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 5, 10)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraController = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         # line-based material
         linePoints = [[-6,0,-4],[6,0,-4],[6,0,4],[-6,0,4],[-6,0,-4]]
@@ -111,11 +111,7 @@ class TestLineMaterials(Base):
         
     def update(self):
         
-        # update camera via keyboard
-        # self.cameraControls.update()
-
-        # automatically update camera - orbit around scene
-        self.camera.transform.rotateY(0.004, Matrix.GLOBAL)
+        self.cameraControls.update()
         
         if self.input.resize():
             size = self.input.getWindowSize()

@@ -21,7 +21,7 @@ class TestHelpers(Base):
 
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 1, 5)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.scene.add( AmbientLight(strength=0.25) )
         directionalLight = DirectionalLight(direction=[-1,-1,-1], position=[3,4,-3])

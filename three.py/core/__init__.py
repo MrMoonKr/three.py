@@ -18,3 +18,6 @@ from core.TextImage import *
 from core.Sprite import *
 
 from core.ParticleEngine import *
+from core.Shaders import *
+from core.UniformsLib import *
+from controls import *

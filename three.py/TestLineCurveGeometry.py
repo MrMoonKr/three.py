@@ -24,7 +24,7 @@ class TestLineCurveGeometry(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 5, 10)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraController = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         rainbowMat = LineBasicMaterial(useVertexColors=True)
         rainbowMat.setUniform("bool", "useVertexColors", 1)
@@ -90,11 +90,7 @@ class TestLineCurveGeometry(Base):
 
     def update(self):
         
-        # update camera via keyboard
-        # self.cameraControls.update()
-        # -or-
-        # automatically update camera - orbit around scene
-        self.camera.transform.rotateY(0.004, Matrix.GLOBAL)
+        self.cameraControls.update()
         
         if self.input.resize():
             size = self.input.getWindowSize()

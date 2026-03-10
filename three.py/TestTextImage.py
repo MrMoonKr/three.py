@@ -22,7 +22,7 @@ class TestTextImage(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 1, 5)
         self.camera.transform.lookAt(0, 0, 0)        
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.scene.add( AmbientLight(strength=0.25) )
         self.scene.add( DirectionalLight(direction=[-1,-1,-1]) )

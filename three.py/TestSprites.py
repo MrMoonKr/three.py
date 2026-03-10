@@ -22,7 +22,7 @@ class TestSprites(Base):
 
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 1, 5)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 1, 0])
 
         gridTexture  = OpenGLUtils.initializeTexture("images/color-grid.png")
         floorMesh = Mesh( QuadGeometry(width=10, height=10),

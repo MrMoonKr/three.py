@@ -8,6 +8,11 @@ from lights import *
 from random import random
 
 class TestSurfaceMaterials(Base):
+
+    def _logShaderBindings(self, bindings):
+        print("Surface material shader bindings:")
+        for label, material in bindings:
+            print(f"  {label}: {material.__class__.__name__} -> {material.shaderName}")
     
     def initialize(self):
 
@@ -22,7 +27,7 @@ class TestSurfaceMaterials(Base):
         
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 8)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
         
         self.scene.add( AmbientLight( strength=0.2 ) )
         self.scene.add( DirectionalLight( direction=[-1,-1,-2] ) )
@@ -60,6 +65,13 @@ class TestSurfaceMaterials(Base):
         sphere4 = Mesh( sphereGeom, gridMaterial )
         sphere4.transform.translate(3, 0, 0, Matrix.LOCAL)
         self.sphereList.append(sphere4)
+
+        self._logShaderBindings([
+            ("wireMaterial", wireMaterial),
+            ("lightMaterial", lightMaterial),
+            ("rainbowMaterial", rainbowMaterial),
+            ("gridMaterial", gridMaterial),
+        ])
 
         for sphere in self.sphereList:
             self.scene.add(sphere)

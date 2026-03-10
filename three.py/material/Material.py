@@ -1,10 +1,20 @@
 from OpenGL.GL import *
 from core import OpenGLUtils, Uniform
+from core.Shaders import getShaderProgramSources
 
 class Material(object):
 
-    def __init__(self, vertexShaderCode, fragmentShaderCode, uniforms=None, name="Material"):
+    def __init__(self, vertexShaderCode=None, fragmentShaderCode=None, uniforms=None, name="Material", shaderName=None):
 
+        if shaderName is not None:
+            vertexShaderCode, fragmentShaderCode = getShaderProgramSources(shaderName)
+
+        if vertexShaderCode is None or fragmentShaderCode is None:
+            raise ValueError("Material requires shader source code or a shaderName.")
+
+        self.shaderName = shaderName
+        self.vertexShaderCode = vertexShaderCode
+        self.fragmentShaderCode = fragmentShaderCode
         self.shaderProgramID = OpenGLUtils.initializeShaderFromCode(vertexShaderCode, fragmentShaderCode)
         self.name = name
 
@@ -14,9 +24,7 @@ class Material(object):
         # TODO: use the UniformList class here. This will require rethinking how textureNumber is set.
         self.uniformList = {}
 
-        if uniforms is not None:
-            for uniform in uniforms:
-                self.setUniform(uniform[0], uniform[1], uniform[2])
+        self.setUniforms(uniforms)
         
         # render settings
 
@@ -45,6 +53,16 @@ class Material(object):
     # value: array of values
     def setUniform(self, type, name, value):
         self.uniformList[name] = Uniform(type, name, value)
+
+    def setUniforms(self, uniforms):
+        if uniforms is None:
+            return
+        for uniform in uniforms:
+            self.setUniform(uniform[0], uniform[1], uniform[2])
+
+    @classmethod
+    def fromShaderLib(cls, shaderName, uniforms=None, name="Material"):
+        return cls(uniforms=uniforms, name=name, shaderName=shaderName)
 
 
     def updateRenderSettings(self):

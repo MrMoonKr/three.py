@@ -22,7 +22,7 @@ class TestPostprocessing2(Base):
         self.camera = PerspectiveCamera()
         self.camera.setAspectRatio(1024/768)
         self.camera.transform.setPosition(0, 0, 6)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.renderTarget = RenderTarget.RenderTarget(1024,768)
         

@@ -22,7 +22,7 @@ class TestPointLight(Base):
 
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 4)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         ambientLight = AmbientLight(color=[1,1,1], strength=0.25)
         self.scene.add( ambientLight )

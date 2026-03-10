@@ -20,7 +20,7 @@ class TestAnimatedVertices(Base):
         
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 4)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
         
         # this shader should only be applied to two geometries
         #   derived from the SurfaceGeometry class with the same resolution

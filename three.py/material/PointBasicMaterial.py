@@ -1,70 +1,13 @@
 from core import *
+from core.UniformsLib import getUniformsLib
 from material import *
 
 class PointBasicMaterial(Material):
 
     def __init__(self, color=[1,1,1], alpha=1, texture=None, size=1, 
         usePerspective=True, useVertexColors=False, alphaTest=0.75):
-        
-        # vertex shader code
-        vsCode = """
-        in vec3 vertexPosition;
-        
-        in vec3 vertexColor;
-        out vec3 vColor; 
-        
-        // adjust projected size of sprites
-        uniform bool usePerspective;
-        uniform float size;
-        
-        uniform mat4 projectionMatrix;
-        uniform mat4 viewMatrix;
-        uniform mat4 modelMatrix;
-        
-        void main()
-        {
-            vColor = vertexColor;
-            vec4 eyePosition = viewMatrix * modelMatrix * vec4(vertexPosition, 1.0);
-            
-            if ( usePerspective )
-                gl_PointSize = 500 * size / length(eyePosition);
-            else
-                gl_PointSize = size;
-                
-            gl_Position = projectionMatrix * eyePosition;
-        }
-        """
 
-        # fragment shader code
-        fsCode = """
-        uniform vec3 color;
-        uniform float alpha;
-
-        uniform bool useVertexColors;
-        in vec3 vColor;
-        
-        uniform bool useTexture;
-        uniform sampler2D image;
-        uniform float alphaTest;
-        void main()
-        {                
-            vec4 baseColor = vec4(color, alpha);
-            
-            if ( useVertexColors )
-                baseColor *= vec4(vColor, 1.0);
-            
-            if ( useTexture )
-                baseColor *= texture(image, gl_PointCoord);
-                
-            gl_FragColor = baseColor;
-            
-            if (gl_FragColor.a < alphaTest)
-                discard;
-        }
-        """
-
-        # initialize shaders
-        super().__init__(vsCode, fsCode)
+        super().__init__(shaderName="points", name="PointBasicMaterial", uniforms=getUniformsLib("common", "points"))
         
         # set render values
         self.drawStyle = GL_POINTS

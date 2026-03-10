@@ -6,7 +6,7 @@ from geometry import *
 from material import *
 from helpers import *
 
-# Note: FirstPersonControls can be attached to any Object3D
+# Note: TrackballControls can be attached to any camera-facing Object3D
 class TestFirstPersonControls(Base):
     
     def initialize(self):
@@ -23,8 +23,10 @@ class TestFirstPersonControls(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0.5, 5)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
-        self.cameraControls.setSpeed(unitsPerSecond=0.5, degreesPerSecond=15)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
+        self.cameraControls.rotateSpeed = 0.012
+        self.cameraControls.zoomSpeed = 0.01
+        self.cameraControls.panSpeed = 0.001
 
         skyTexture  = OpenGLUtils.initializeTexture("images/skysphere.jpg")
         sky = Mesh( SphereGeometry(200, 64,64), SurfaceBasicMaterial(texture=skyTexture) )

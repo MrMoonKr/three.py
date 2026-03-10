@@ -22,7 +22,7 @@ class TestPostprocessing1(Base):
         self.camera = PerspectiveCamera()
         self.camera.setAspectRatio(1024/768)
         self.camera.transform.setPosition(0, 0, 6) 
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.scene.add( AmbientLight(strength=0.25) )
         self.scene.add( DirectionalLight(direction=[-1,-1,-1]) )

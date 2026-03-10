@@ -25,7 +25,7 @@ class TestAnimatedDayNight(Base):
         
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 0, 4)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
         
         starTexture  = OpenGLUtils.initializeTexture("images/stars.jpg")      
         stars = Mesh( SphereGeometry(200, 64,64), SurfaceBasicMaterial(texture=starTexture) )

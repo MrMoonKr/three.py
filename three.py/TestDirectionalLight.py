@@ -23,7 +23,7 @@ class TestDirectionalLight(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 1, 7)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         ambientLight = AmbientLight(color=[0.1,0.1,0.2])
         self.scene.add( ambientLight )

@@ -26,7 +26,7 @@ class TestOBJGeometry(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 3, 7)
         self.camera.transform.lookAt( 0, 0, 0 )
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
         
         ambientLight = AmbientLight(strength=0.25)
         directionalLight = DirectionalLight(direction=[-1,-1,-1])

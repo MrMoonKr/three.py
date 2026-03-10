@@ -23,7 +23,7 @@ class TestSurfaceGeometry(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 9, 12)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 0, 0])
 
         self.scene.add( AmbientLight(strength=0.25) )
         self.scene.add( DirectionalLight(direction=[-1,-1,-1]) )
@@ -113,11 +113,7 @@ class TestSurfaceGeometry(Base):
         
     def update(self):
 
-        # update camera via keyboard
-        # self.cameraControls.update()
-        # -or-
-        # automatically update camera - orbit around scene
-        self.camera.transform.rotateY(0.004, Matrix.GLOBAL)
+        self.cameraControls.update()
         
         if self.input.resize():
             size = self.input.getWindowSize()
