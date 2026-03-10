@@ -13,14 +13,27 @@ class TestSurfaceMaterials(Base):
         print("Surface material shader bindings:")
         for label, material in bindings:
             print(f"  {label}: {material.__class__.__name__} -> {material.shaderName}")
+
+    def _createOverlaySphere(self, geometry, baseMaterial, overlayMaterial, xPosition):
+        sphereGroup = Object3D()
+        sphereGroup.transform.translate(xPosition, 0, 0, Matrix.LOCAL)
+
+        baseSphere = Mesh(geometry, baseMaterial)
+        overlaySphere = Mesh(geometry, overlayMaterial)
+        overlaySphere.transform.scaleUniform(1.002)
+
+        sphereGroup.add(baseSphere)
+        sphereGroup.add(overlaySphere)
+        return sphereGroup
     
     def initialize(self):
 
         self.setWindowTitle('Surface Materials')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
-        self.renderer.setViewportSize(800,800)
+        #self.renderer.setViewportSize(800,800)
         self.renderer.setClearColor(0.25,0.25,0.25)
         
         self.scene = Scene()
@@ -37,11 +50,19 @@ class TestSurfaceMaterials(Base):
         sphereGeom = SphereGeometry(radius=0.9)
         
         gridTexture  = OpenGLUtils.initializeTexture("images/color-grid.png")
+        moonTexture  = OpenGLUtils.initializeTexture("images/moon.jpg")
         gridMaterial = SurfaceLightMaterial(texture=gridTexture)
 
         wireMaterial = SurfaceBasicMaterial(color=[0.8,0.8,0.8], wireframe=True, lineWidth=2)
 
         lightMaterial = SurfaceLightMaterial(color=[0.5,0.5,1.0])
+        litOverlayBaseMaterial = SurfaceLightMaterial(texture=moonTexture)
+        litOverlayWireMaterial = SurfaceLightMaterial(
+            color=[0.1,0.8,0.1],
+            alpha=0.65,
+            wireframe=True,
+            lineWidth=2,
+        )
         
         rainbowMaterial = SurfaceLightMaterial(useVertexColors=True)
         vertexColorData = []
@@ -51,26 +72,36 @@ class TestSurfaceMaterials(Base):
         sphereGeom.setAttribute("vec3", "vertexColor", vertexColorData)
         
         sphere1 = Mesh( sphereGeom, wireMaterial )
-        sphere1.transform.translate(-3, 0, 0, Matrix.LOCAL)
+        sphere1.transform.translate(-4, 0, 0, Matrix.LOCAL)
         self.sphereList.append(sphere1)
 
         sphere2 = Mesh( sphereGeom, lightMaterial )
-        sphere2.transform.translate(-1, 0, 0, Matrix.LOCAL)
+        sphere2.transform.translate(-2, 0, 0, Matrix.LOCAL)
         self.sphereList.append(sphere2)
         
         sphere3 = Mesh( sphereGeom, rainbowMaterial )
-        sphere3.transform.translate(1, 0, 0, Matrix.LOCAL)
+        sphere3.transform.translate(0, 0, 0, Matrix.LOCAL)
         self.sphereList.append(sphere3)
 
         sphere4 = Mesh( sphereGeom, gridMaterial )
-        sphere4.transform.translate(3, 0, 0, Matrix.LOCAL)
+        sphere4.transform.translate(2, 0, 0, Matrix.LOCAL)
         self.sphereList.append(sphere4)
+
+        sphere5 = self._createOverlaySphere(
+            sphereGeom,
+            litOverlayBaseMaterial,
+            litOverlayWireMaterial,
+            4,
+        )
+        self.sphereList.append(sphere5)
 
         self._logShaderBindings([
             ("wireMaterial", wireMaterial),
             ("lightMaterial", lightMaterial),
             ("rainbowMaterial", rainbowMaterial),
             ("gridMaterial", gridMaterial),
+            ("litOverlayBaseMaterial", litOverlayBaseMaterial),
+            ("litOverlayWireMaterial", litOverlayWireMaterial),
         ])
 
         for sphere in self.sphereList:

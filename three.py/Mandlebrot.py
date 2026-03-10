@@ -10,10 +10,11 @@ class TestMandlebrot(Base):
     def initialize(self):
 
         self.setWindowTitle('Mandlebrot set')
-        self.setWindowSize(640,640)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
-        self.renderer.setViewportSize(640,640)
+        #self.renderer.setViewportSize(640,640)
         self.renderer.setClearColor(0.25, 0.25, 0.25)
         
         self.scene = Scene()
@@ -185,12 +186,11 @@ class TestMandlebrot(Base):
             uniformData["screenSize"].value = [ newSize["width"], newSize["height"] ]
 
         self.renderer.render(self.scene, self.camera)
-                    
-_BaseGLApp = GLApp
 
-class GLApp(_BaseGLApp):
+class GLApp(tk.Tk):
     def __init__(self):
-        super().__init__(TestMandlebrot)
+        super().__init__()
+        self.base = TestMandlebrot(self)
 
 def main() -> None:
     app = GLApp()

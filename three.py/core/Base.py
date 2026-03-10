@@ -11,7 +11,10 @@ from core.Input import Input
 
 
 class Base(OpenGLFrame):
-
+    '''
+        A base class that inherits from pyopengltk.OpenGLFrame to render OpenGL content
+        within a Tkinter application.
+        '''
     def __init__(self, master):
         self.screenSize = (900, 600)
         self.deltaTime = 0
@@ -29,7 +32,7 @@ class Base(OpenGLFrame):
         self._initializationError = None
 
         super().__init__(master, width=self.screenSize[0], height=self.screenSize[1])
-        self.animate = 1
+        self.animate = True
         self.pack(fill="both", expand=True)
         self.focus_set()
 

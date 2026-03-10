@@ -3,10 +3,12 @@ from OpenGL.GL import *
 # objects that have associated uniforms (that may affect rendering a scene):
 #  Material, Mesh, Camera, Light, Fog
 class Uniform(object):
-
-    def __init__(self, type, name, value):
+    '''
+        Wrapper for Uniform Variabe in Shader
+        '''
+    def __init__(self, type: str, name: str, value):
         
-        # type: float | vec2 | vec3 | vec4 | mat4 | bool | sampler2D
+        # types: float | vec2 | vec3 | vec4 | mat4 | bool | sampler2D
         self.type = type
         
         # name of corresponding variable in shader program

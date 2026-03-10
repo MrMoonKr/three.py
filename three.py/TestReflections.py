@@ -1,8 +1,9 @@
 import tkinter as tk
 
-from math import sin, cos
+from math import pi, sin
 
 from core import *
+from core.RenderTarget import RenderTarget as FrameRenderTarget
 from cameras import *
 from mathutils import *
 from geometry import *
@@ -15,6 +16,7 @@ class TestReflections(Base):
 
         self.setWindowTitle('Test Reflections')
         self.setWindowSize(800,800)
+        self.centerWindow()
         
         self.renderer = Renderer()
         self.renderer.setViewportSize(800,800)
@@ -25,28 +27,31 @@ class TestReflections(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 3, 7)
         self.camera.transform.lookAt( 0, 0, 0 )
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 1, 0])
 
         self.translationFunction = lambda t: [sin(t*2),sin(t),0]
         self.time = 0
         self.cubePosition = self.translationFunction(self.time)
 
-        self.renderTarget = RenderTarget(1024,768)
-        self.firstReflectionCamera = PerspectiveCamera()
-        self.firstReflectionCamera.transform.setPosition(self.cubePosition[0],self.cubePosition[1],
-                                            self.cubePosition[2],Matrix.GLOBAL)
-        self.firstReflectionCamera.transform.rotateY(3.14/2,Matrix.LOCAL)
+        self.renderTarget = FrameRenderTarget(1024,768)
+        self.firstReflectionCamera = PerspectiveCamera(aspectRatio=1024/768)
+        self.reflectionTarget = [4, 1, 0]
 
         starTexture  = OpenGLUtils.initializeTexture("images/skysphere.jpg")
         stars = Mesh( SphereGeometry(200, 64,64), SurfaceBasicMaterial(texture=starTexture) )
         self.scene.add(stars)
 
+        floorMesh = GridHelper(size=10, divisions=10, gridColor=[0,0,0], centerColor=[1,0,0], lineWidth=2)
+        floorMesh.transform.rotateX(-pi / 2, Matrix.LOCAL)
+        self.scene.add(floorMesh)
+
 
         #initialize shaders
         vsCode = """
-        attribute vec3 vertexPosition;
-        attribute vec2 vertexUV;
+        in vec3 vertexPosition;
+        in vec2 vertexUV;
 
-        varying vec3 position;
+        out vec3 position;
 
         uniform mat4 projectionMatrix;
         uniform mat4 viewMatrix;
@@ -61,7 +66,7 @@ class TestReflections(Base):
 
         fsCode = """
 
-        varying vec3 position;
+        in vec3 position;
         uniform float width;
         
         //credit to Laur(link: https://www.laurivan.com/rgb-to-hsv-to-rgb-for-shaders/)
@@ -101,36 +106,59 @@ class TestReflections(Base):
         #make a custom material with the above values
         self.customMaterial = Material(vsCode,fsCode,rainbowUniforms)
 
-        #Cube to show of the new material
-        self.cubeGeo = BoxGeometry()
+        self.rainbowPanel = Mesh(QuadGeometry(width=3, height=3), self.customMaterial)
+        self.rainbowPanel.transform.setPosition(self.reflectionTarget[0], self.reflectionTarget[1], self.reflectionTarget[2])
+        self.rainbowPanel.transform.rotateY(-pi / 2, Matrix.LOCAL)
+        self.scene.add(self.rainbowPanel)
 
-        self.cubeMesh = Mesh(self.cubeGeo,SurfaceBasicMaterial(texture=self.renderTarget.textureID))
+        self.cubeGeo = BoxGeometry()
+        self.cubeMesh = Mesh(self.cubeGeo, SurfaceBasicMaterial(texture=self.renderTarget.textureID))
         self.scene.add(self.cubeMesh)
 
+        self.previewQuad = Mesh(QuadGeometry(width=2.2, height=1.6), SurfaceBasicMaterial(texture=self.renderTarget.textureID))
+        self.previewQuad.transform.setPosition(-3.5, 1.5, -1.5)
+        self.scene.add(self.previewQuad)
         
         self.cubeMesh.transform.setPosition(self.cubePosition[0],self.cubePosition[1],
                                             self.cubePosition[2],Matrix.GLOBAL)
+        self._updateReflectionCamera()
         
         
     def update(self):
-        self.time += 1/60
+        self.time += self.deltaTime
 
-        #self.cubePosition = self.translationFunction(self.time)
-        #self.cubeMesh.transform.setPosition(self.cubePosition[0],self.cubePosition[1],
-        #                                    self.cubePosition[2],Matrix.GLOBAL)
+        self.cubePosition = self.translationFunction(self.time)
+        self.cubeMesh.transform.setPosition(self.cubePosition[0],self.cubePosition[1],
+                                            self.cubePosition[2],Matrix.GLOBAL)
         self.cubeMesh.transform.rotateX(0.02,Matrix.LOCAL)
-        #self.cubeMesh.transform.rotateY(0.02,Matrix.LOCAL)
+        self.cubeMesh.transform.rotateY(0.015,Matrix.LOCAL)
+        self.cameraControls.update()
+        self._updateReflectionCamera()
         
         if self.input.resize():
             size = self.input.getWindowSize()
             self.camera.setAspectRatio( size["width"]/size["height"] )
             self.renderer.setViewportSize(size["width"], size["height"])
 
-        self.renderer.render(self.scene, self.camera, self.renderTarget)    
-
-        
-        
+        self.cubeMesh.visible = False
+        self.previewQuad.visible = False
+        self.renderer.render(self.scene, self.firstReflectionCamera, self.renderTarget)
+        self.previewQuad.visible = True
+        self.cubeMesh.visible = True
         self.renderer.render(self.scene, self.camera)
+
+    def _updateReflectionCamera(self):
+        self.firstReflectionCamera.transform.setPosition(
+            self.cubePosition[0],
+            self.cubePosition[1],
+            self.cubePosition[2],
+            Matrix.GLOBAL,
+        )
+        self.firstReflectionCamera.transform.lookAt(
+            self.reflectionTarget[0],
+            self.reflectionTarget[1],
+            self.reflectionTarget[2],
+        )
                     
 class GLApp(tk.Tk):
     def __init__(self):

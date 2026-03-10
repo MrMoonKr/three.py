@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from core import Base, Renderer, Scene, RenderTarget, Mesh, FirstPersonController, OpenGLUtils
+from core import *
 from cameras import PerspectiveCamera
 from lights import AmbientLight, DirectionalLight
 from geometry import QuadGeometry, SphereGeometry, BoxGeometry
@@ -18,7 +18,8 @@ class TestShadows(Base):
     def initialize(self):
 
         self.setWindowTitle('Shadows')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
         self.renderer.setViewportSize(800,800)

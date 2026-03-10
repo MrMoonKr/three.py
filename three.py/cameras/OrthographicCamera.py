@@ -2,7 +2,9 @@ from cameras import Camera
 from mathutils import MatrixFactory
 
 class OrthographicCamera(Camera):
-
+    '''
+        Orthographic Camera
+        '''
     def __init__(self, left=-1, right=1, top=1, bottom=-1, near=1, far=-1):
         super().__init__()
         self.setViewRegion(left, right, top, bottom, near, far)

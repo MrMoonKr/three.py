@@ -11,7 +11,8 @@ class TestRenderTarget(Base):
     def initialize(self):
 
         self.setWindowTitle('Render Target')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
         self.renderer.setViewportSize(800,800)

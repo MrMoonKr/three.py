@@ -14,10 +14,11 @@ class TestCustomMaterials(Base):
     def initialize(self):
 
         self.setWindowTitle('Custom Materials')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
         
         self.renderer = Renderer()
-        self.renderer.setViewportSize(800,800)
+        #self.renderer.setViewportSize(800,800)
         self.renderer.setClearColor(0.25,0.25,0.25)
 
         self.scene = Scene()

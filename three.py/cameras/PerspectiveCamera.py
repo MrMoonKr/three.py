@@ -2,7 +2,9 @@ from cameras import Camera
 from mathutils import MatrixFactory
 
 class PerspectiveCamera(Camera):
-
+    '''
+        Perspective Camera
+        '''
     def __init__(self, fieldOfView=60, aspectRatio=1, nearDistance=0.1, farDistance=1000):
         super().__init__()
         self.fieldOfView = fieldOfView

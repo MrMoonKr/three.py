@@ -1,4 +1,5 @@
 import tkinter as tk
+from pathlib import Path
 
 from core import *
 from cameras import *
@@ -11,10 +12,11 @@ class TestExtrusion(Base):
     def initialize(self):
 
         self.setWindowTitle('Test')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
-        self.renderer.setViewportSize(800,800)
+        #self.renderer.setViewportSize(800,800)
         self.renderer.setClearColor(0.25, 0.25, 0.25)
         
         self.scene = Scene()
@@ -33,7 +35,8 @@ class TestExtrusion(Base):
         material = SurfaceBasicMaterial()
         
         #geometry
-        geometry = OBJExtruder('models/TestTriangle.obj')
+        modelPath = Path(__file__).resolve().parent / "models" / "TestTriangle.obj"
+        geometry = OBJExtruder(str(modelPath))
 
         self.mesh = Mesh(geometry,material)
         self.scene.add(self.mesh)

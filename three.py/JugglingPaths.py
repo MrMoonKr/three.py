@@ -1,3 +1,5 @@
+import tkinter as tk
+
 from core import *
 from cameras import *
 from lights import AmbientLight, DirectionalLight
@@ -11,10 +13,11 @@ class JugglingPaths(Base):
     def initialize(self):
 
         self.setWindowTitle('Juggling Paths')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
-        self.renderer.setViewportSize(800,800)
+        #self.renderer.setViewportSize(800,800)
         self.renderer.setClearColor(0.25, 0.25, 0.25)
         
         self.scene = Scene()
@@ -22,7 +25,7 @@ class JugglingPaths(Base):
         self.camera = PerspectiveCamera()
         self.camera.transform.setPosition(0, 1, 5)
         self.camera.transform.lookAt(0, 0, 0)
-        self.cameraControls = FirstPersonController(self.input, self.camera)
+        self.cameraControls = TrackballControls(self.input, self.camera, [0, 1, 0])
 
         self.scene.add( AmbientLight(strength=0.25) )
         self.scene.add( DirectionalLight(direction=[-1,-1,-2]) )
@@ -131,12 +134,12 @@ class JugglingPaths(Base):
             self.renderer.setViewportSize(size["width"], size["height"])
             
         self.renderer.render(self.scene, self.camera)
-                    
-_BaseGLApp = GLApp
 
-class GLApp(_BaseGLApp):
+
+class GLApp(tk.Tk):
     def __init__(self):
-        super().__init__(JugglingPaths)
+        super().__init__()
+        self.base = JugglingPaths(self)
 
 def main() -> None:
     app = GLApp()

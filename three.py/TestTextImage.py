@@ -11,10 +11,11 @@ class TestTextImage(Base):
     def initialize(self):
 
         self.setWindowTitle('Text Images and HUD Text')
-        self.setWindowSize(600,600)
+        self.setWindowSize(1200, 760)
+        self.centerWindow()
 
         self.renderer = Renderer()
-        self.renderer.setViewportSize(600,600)
+        #self.renderer.setViewportSize(600,600)
         self.renderer.setClearColor(0.75,0.75,0.75)
         
         self.scene = Scene()

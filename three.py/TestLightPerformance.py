@@ -14,10 +14,11 @@ class TestLightPerformance(Base):
     def initialize(self):
 
         self.setWindowTitle('Lots of Dynamically Lit Cubes')
-        self.setWindowSize(800,800)
+        self.setWindowSize(1200, 760)
+        #self.centerWindow()
 
         self.renderer = Renderer()
-        self.renderer.setViewportSize(800,800)
+        #self.renderer.setViewportSize(800,800)
         self.renderer.setClearColor(0.25, 0.25, 0.25)
 
         # self.renderer.setFog( Fog(startDistance=2, endDistance=20, color=[0,0,0.15]) )

@@ -3,7 +3,9 @@ from core import Object3D, Uniform, UniformList
 from mathutils import MatrixFactory
 
 class Camera(Object3D):
-
+    '''
+        View Matrix + Projection Matrix
+        '''
     def __init__(self):
         super().__init__()
         self.projectionMatrix = MatrixFactory.makeIdentity()
