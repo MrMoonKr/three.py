@@ -11,6 +11,7 @@ UniformsLib = {
         ("bool", "useDashes", 0),
         ("float", "dashLength", 0),
         ("float", "gapLength", 0),
+        ("float", "dashOffset", 0),
     ],
     "surface": [
         ("bool", "useVertexColors", 0),

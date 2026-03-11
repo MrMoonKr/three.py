@@ -15,7 +15,7 @@ class LineGeometry(Geometry):
         for index in range( 1, vertexCount ):
             segmentLength = np.linalg.norm( np.subtract(vertexPositionData[index], vertexPositionData[index-1]) )
             totalArcLength += segmentLength
-            vertexArcLengthData.append( totalArcLength )
+            vertexArcLengthData.append( totalArcLength ) # array of accumulated lengths 
             
         self.setAttribute("float", "vertexArcLength", vertexArcLengthData)
         

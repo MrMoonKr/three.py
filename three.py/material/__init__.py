@@ -8,6 +8,7 @@ from material.SurfaceLightMaterial import *
 from material.LineBasicMaterial import *
 from material.LineSegmentMaterial import *
 from material.LineDashedMaterial import *
+from material.LineDashedScrollingMaterial import *
 
 # point materials
 from material.PointBasicMaterial import *

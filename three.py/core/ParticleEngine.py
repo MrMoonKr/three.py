@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from core import Mesh
 from geometry import Geometry
-from material import Material
+from material.Material import Material
 from mathutils import RandomUtils, Tween
 
 import random as rand

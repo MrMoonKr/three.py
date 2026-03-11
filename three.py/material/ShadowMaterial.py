@@ -1,4 +1,4 @@
-from material import Material
+from material.Material import Material
 
 class ShadowMaterial(Material):
 

@@ -1,10 +1,12 @@
 import tkinter as tk
 
 from core import *
+from core.ParticleEngine import ParticleEngine
 from cameras import *
 from geometry import *
 from material import *
 from helpers import *
+from mathutils import Tween
 
 class TestParticleEngine(Base):
     

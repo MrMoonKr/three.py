@@ -2,7 +2,6 @@ import numpy as np
 from core import Uniform, RenderTarget
 from cameras import ShadowCamera
 from lights import Light
-from material import ShadowMaterial
 from mathutils import MatrixFactory
 from math import acos
 
@@ -48,6 +47,7 @@ class DirectionalLight(Light):
         return list( rotationMatrix @ self.DEFAULT )
     
     def enableShadows(self, strength=0.5, bias=0.005, size=[1024,1024]):
+        from material.ShadowMaterial import ShadowMaterial
         
         # developer may need to call dirLight.shadowCamera.setViewRegion
         #   to configure size according to scene dimensions

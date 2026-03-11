@@ -17,7 +17,30 @@ from core.RenderTarget import *
 from core.TextImage import *
 from core.Sprite import *
 
-from core.ParticleEngine import *
 from core.Shaders import *
 from core.UniformsLib import *
 from controls import *
+
+_LAZY_EXPORTS = {
+    "ParticleEngine",
+    "ParticleMaterial",
+    "ParticleGeometry",
+    "Particle",
+}
+
+__all__ = [name for name in globals() if not name.startswith("_")]
+
+
+def __getattr__(name):
+    if name in _LAZY_EXPORTS:
+        from core.ParticleEngine import Particle, ParticleEngine, ParticleGeometry, ParticleMaterial
+
+        globals().update({
+            "Particle": Particle,
+            "ParticleEngine": ParticleEngine,
+            "ParticleGeometry": ParticleGeometry,
+            "ParticleMaterial": ParticleMaterial,
+        })
+        return globals()[name]
+
+    raise AttributeError(f"module 'core' has no attribute '{name}'")

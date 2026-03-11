@@ -83,6 +83,12 @@ class TestLineMaterials(Base):
         hilbert4.transform.translate(4,0,2)
         self.meshList.append(hilbert4)
 
+        # scrolling dashed cyan
+        scrollingMat = LineDashedScrollingMaterial(color=[0,1,1], dashLength=0.20, gapLength=0.10, dashSpeed=0.75)
+        hilbert7 = Mesh(LineGeometry(hilbertPoints), scrollingMat)
+        hilbert7.transform.translate(0,2.5,0)
+        self.meshList.append(hilbert7)
+
         # light to dark
         hilbertGeoB = LineGeometry(hilbertPoints)
         vertexColorDataB = []
@@ -122,7 +128,9 @@ class TestLineMaterials(Base):
         for mesh in self.meshList:
             mesh.transform.rotateX(0.030, Matrix.LOCAL)
             mesh.transform.rotateY(0.015, Matrix.LOCAL)
-        
+            if isinstance(mesh.material, LineDashedScrollingMaterial):
+                mesh.material.update(self.deltaTime)
+
         self.renderer.render(self.scene, self.camera)
                     
 class GLApp(tk.Tk):

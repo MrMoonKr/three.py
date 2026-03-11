@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from core import *
 from core.UniformsLib import getUniformsLib
-from material import Material
+from material.Material import Material
 
 class SurfaceBasicMaterial(Material):
         

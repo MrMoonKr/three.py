@@ -209,6 +209,7 @@ registerShaderChunk(
     }
     """,
 )
+
 # "line_basic_vertex_pars"
 registerShaderChunk(
     "line_basic_vertex_pars",
@@ -251,6 +252,7 @@ registerShaderChunk(
     uniform bool useDashes;
     uniform float dashLength;
     uniform float gapLength;
+    uniform float dashOffset;
     in float arcLength;
 
     #include <fog_fragment_pars>
@@ -262,7 +264,7 @@ registerShaderChunk(
     """
     if ( useDashes )
     {
-        float modLength = mod(arcLength, dashLength + gapLength);
+        float modLength = mod(arcLength + dashOffset, dashLength + gapLength);
         if ( modLength > dashLength )
             discard;
     }
@@ -690,4 +692,3 @@ registerShaderLib(
     }
     """,
 )
-

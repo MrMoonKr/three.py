@@ -24,4 +24,5 @@ class LineBasicMaterial(Material):
         self.setUniform( "bool", "useDashes", 0 )
         self.setUniform( "float", "dashLength", 0 )
         self.setUniform( "float", "gapLength", 0 )
+        self.setUniform( "float", "dashOffset", 0 )
         
